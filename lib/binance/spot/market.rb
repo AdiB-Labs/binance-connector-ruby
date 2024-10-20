@@ -210,10 +210,17 @@ module Binance
       #
       # @param symbol [String] the symbol
       # @see https://developers.binance.com/docs/binance-spot-api-docs/rest-api#symbol-order-book-ticker
-      def book_ticker(symbol: nil)
+      def book_ticker(symbol: nil, symbols: nil)
+        params = { symbol: symbol.upcase } if symbol
+
+        if symbols
+          symbols = symbols.map { |s| "\"#{s}\"" }.join(',')
+          params = { symbols: "\[#{symbols}\]".upcase }
+        end
+
         @session.public_request(
           path: '/api/v3/ticker/bookTicker',
-          params: { symbol: symbol }
+          params: params
         )
       end
 
